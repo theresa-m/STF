@@ -136,7 +136,11 @@ public class LoadTestProcessDefinition implements ProcessDefinition {
 	
 	public LoadTestProcessDefinition(StfEnvironmentCore environmentCore, JavaVersion jvm) throws StfException {
 		this.environmentCore = environmentCore;
-		javaProcessDefinition = new JavaProcessDefinition(environmentCore, jvm);
+		this.javaProcessDefinition = new JavaProcessDefinition(environmentCore, jvm);
+		if (getJavaVersion().getJavaVersion() >= 24) {
+			// TODO update this link - need to figure out how to make this into its own jar
+			this.addJvmOption("-javaagent:BlockSystemExitAgent.jar");
+		}
 	}
 
 

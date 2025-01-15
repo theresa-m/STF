@@ -30,6 +30,7 @@ limitations under the License.
 	<!-- dir must be set on the ant task otherwise the basedir property is not set to a new value in the subant task. -->
 	<target name="build-dependencies" depends="check-prereqs">
 		<ant antfile="${stf_root}/stf.core/build.xml" dir="${stf_root}/stf.core" inheritAll="true"/>
+		<ant antfile="${stf_root}/stf.loadagent/build.xml" dir="${stf_root}/stf.loadagent" inheritAll="true"/>
 		<ant antfile="${stf_root}/stf.load/build.xml" dir="${stf_root}/stf.load" inheritAll="true"/>
 		<ant antfile="${stf_root}/stf.samples/build.xml" dir="${stf_root}/stf.samples" inheritAll="true"/>
 	</target>
