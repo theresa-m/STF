@@ -15,7 +15,6 @@
 package net.adoptopenjdk.loadTest;
 
 import java.io.File;
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -108,10 +107,9 @@ public class LoadTest {
 			logger.fatal("Failed to initialise LoadTest", e);
 			System.exit(2);
 		}
-		
-		// Setup a security manager to block System.exit attempts
-		SecurityManager defaultSecurityManager = System.getSecurityManager();
-		overrideSecurityManager();
+
+		BlockExitHelper BlockExitHelper = new BlockExitHelper();
+		BlockExitHelper.enable();
 
 		// Run the tests
 		long numberFailingTests = -1;
@@ -122,31 +120,11 @@ public class LoadTest {
 			System.exit(3);
 		}
 		
-		// Restore original security manager
-		System.setSecurityManager(defaultSecurityManager);
+		BlockExitHelper.disable();
 		
 		// Exit with a non-zero value if a test has failed
 		int exitCode = numberFailingTests == 0 ? 0 : 1;
 		System.exit(exitCode);
-	}
-
-
-	private static void overrideSecurityManager() {
-	    System.setSecurityManager(new SecurityManager() { 
-	        @Override
-	    	public void checkExit(int status) {
-	        	// Don't allow the test to exit the process
-	     		super.checkExit(status);
-	    		throw new BlockedExitException(status);
-	    	}
-	    	 
-	    	public void checkPermission(Permission perm) {
-	    	}
-	        
-	        // Don't block permission check, so that log4j will work
-	        public void checkPermission(Permission perm, Object context) {
-	        }
-	     });
 	}
 
 
