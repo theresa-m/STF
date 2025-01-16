@@ -193,6 +193,13 @@ class LoadTestRunner {
 										// Some other invocation exception. Rethrow to log as test failure.
 										throw e;
 									}
+								} catch(BlockedExitException exitException) {
+									// The test has attempted to call System.exit(). Keep running.
+									if (exitException.getExitValue() == 0) {
+										testResult = ResultStatus.BLOCKED_EXIT_PASS;
+									} else {
+										testResult = ResultStatus.BLOCKED_EXIT_FAIL;
+									}
 								}
 
 								// Test completed. Record pass/fail result to file

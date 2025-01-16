@@ -34,6 +34,12 @@ public class BlockedExitException extends SecurityException {
 		this.exitValue = exitValue;
 	}
 
+	// TODO temp
+	public BlockedExitException(String s) {
+		super();
+		this.exitValue = 0;
+	}
+
 	public int getExitValue() {
 		return exitValue;
 	}

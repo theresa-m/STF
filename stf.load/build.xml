@@ -58,6 +58,10 @@ limitations under the License.
 	<target name="build-jar" depends="build-java, create-bin-dir">
 		<jar destfile="${stf_load_jar_file}">
 			<fileset dir="${stf_load_bin_dir}" includes="**/*.class" />
+			<manifest>
+				<attribute name="Premain-Class" value="net.adoptopenjdk.loadagent.LoadAgent"/>
+				<attribute name="Can-Retransform-Classes" value="true"/>
+			</manifest>
 		</jar>
 	</target>
 

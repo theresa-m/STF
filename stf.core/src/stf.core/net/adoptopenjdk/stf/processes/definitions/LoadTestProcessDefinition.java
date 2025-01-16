@@ -136,7 +136,9 @@ public class LoadTestProcessDefinition implements ProcessDefinition {
 	
 	public LoadTestProcessDefinition(StfEnvironmentCore environmentCore, JavaVersion jvm) throws StfException {
 		this.environmentCore = environmentCore;
-		javaProcessDefinition = new JavaProcessDefinition(environmentCore, jvm);
+		this.javaProcessDefinition = new JavaProcessDefinition(environmentCore, jvm);
+		String agentUrl = System.getProperty("load.url");
+		this.addJvmOption("-javaagent:" + agentUrl);
 	}
 
 

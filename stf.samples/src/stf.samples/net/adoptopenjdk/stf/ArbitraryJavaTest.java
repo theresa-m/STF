@@ -29,6 +29,9 @@ public class ArbitraryJavaTest {
 		if (System.currentTimeMillis() < 666) { 
 			throw new IllegalStateException("System clock wrong");
 		}
+		System.out.println("ArbitraryJavaTest try exit");
+		System.exit(3); // TODO just doing this to make sure my agent is working
+		System.out.println("ArbitraryJavaTest got to here");
 	}
 	
 	public void runTest(int expectedResult, int v1, int v2) {
