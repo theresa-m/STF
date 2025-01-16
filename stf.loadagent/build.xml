@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!-- TODO only do all this for 24+. Also fix all the spacing in this file. -->
+<!-- need special manifest.md file https://bugs.openjdk.org/browse/JDK-8338625 -->
+<project name="stf.loadagent" default="build">
+    <echo message="Executing stf.loadagent/build.xml"/>
+
+    <!-- Import settings used by multiple projects.  -->
+	<import file="${stf_root}/stf.build/include/top.xml"/>
+
+    <property name="stf_loadagent_module" value="stf.loadagent" />
+	<property name="stf_loadagent_src_dir" value="src/${stf_loadagent_module}" />
+    <property name="stf_loadagent_bin_dir" value="bin" />
+    <property name="stf_loadagent_jar_file" value="${stf_loadagent_bin_dir}/${stf_loadagent_module}.jar" />
+
+	<!-- Projects which need to be built before this one. -->
+	<!-- dir must be set on the ant task otherwise the basedir property is not set to a new value in the subant task. -->
+	<target name="build-dependencies" depends="check-prereqs">
+		<ant antfile="${stf_root}/stf.core/build.xml" dir="${stf_root}/stf.core" inheritAll="true"/>
+	</target>
+
+	<target name="build" depends="build-dependencies, check-prereqs, build-jar">
+	</target>
+
+	<target name="build-jar" depends="build-java, create-bin-dir">
+		<jar destfile="${stf_loadagent_jar_file}">
+		<!--manifest=agent.mf-->
+			<fileset dir="${stf_loadagent_bin_dir}" includes="**/*.class" />
+			<manifest>
+        		<attribute name="Premain-Class" value="net.adoptopenjdk.loadagent.LoadAgent"/>
+				<attribute name="Can-Retransform-Classes" value="true"/>
+    		</manifest>
+		</jar>
+	</target>
+
+	<target name="build-java" depends="check-prereqs, create-bin-dir">
+		 <!--
+		 	The Ant javac task only checks time dependencies between .java files and their .class files,
+			so fails to recompile in situations such as the signatures of a dependent method changing.
+			The depend target checks the dependencies and deletes any .class files older than the files
+			which depend on them, thereby ensuring recompilation.
+		-->
+        <!-- Classes can be built using Java 24 or later.  -->
+        <javac srcdir="${stf_loadagent_src_dir}"
+			   destdir="${stf_loadagent_bin_dir}"
+			   debug="true"
+			   fork="true"
+			   executable="${java_compiler}"
+			   classpathref="project.class.path"
+			   encoding="${src-encoding}"
+			   includeantruntime="false"
+			   failonerror="true">
+			<include name="**/*.java"/>
+		</javac>
+	</target>
+
+	<target name="create-bin-dir">
+		<mkdir dir="${stf_loadagent_bin_dir}"/>
+	</target>
+
+	<target name="clean">
+		<delete dir="${stf_loadagent_bin_dir}"/>
+	</target>
+</project>

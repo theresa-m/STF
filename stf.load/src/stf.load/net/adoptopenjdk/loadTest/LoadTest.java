@@ -108,19 +108,14 @@ public class LoadTest {
 			System.exit(2);
 		}
 
-		BlockExitHelper BlockExitHelper = new BlockExitHelper();
-		BlockExitHelper.enable();
-
 		// Run the tests
 		long numberFailingTests = -1;
 		try {
 			numberFailingTests = loadTest.runLoadTest();
 		} catch (Exception e) {
 			logger.fatal("Failed during LoadTest execution", e);
-			System.exit(3);
+			throw new BlockedExitException(3);
 		}
-		
-		BlockExitHelper.disable();
 		
 		// Exit with a non-zero value if a test has failed
 		int exitCode = numberFailingTests == 0 ? 0 : 1;

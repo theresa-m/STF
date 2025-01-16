@@ -136,7 +136,11 @@ public class LoadTestProcessDefinition implements ProcessDefinition {
 	
 	public LoadTestProcessDefinition(StfEnvironmentCore environmentCore, JavaVersion jvm) throws StfException {
 		this.environmentCore = environmentCore;
-		javaProcessDefinition = new JavaProcessDefinition(environmentCore, jvm);
+		this.javaProcessDefinition = new JavaProcessDefinition(environmentCore, jvm);
+		if (getJavaVersion().getJavaVersion() >= 24) {
+			// TODO update path
+			this.addJvmOption("-javaagent:/Users/theresamammarella/github/STF/stf.loadagent/bin/stf.loadagent.jar");
+		}
 	}
 
 
