@@ -49,7 +49,7 @@ limitations under the License.
 	</condition>
 
 	<!--Following are the systemtest prereq jar versions currently in use-->
-	<property name="asm-version" value="9.0"/>
+	<property name="asm-version" value="9.7.1"/>
 	<property name="ant-version" value="1.10.2"/>
 	<property name="log4j-version" value="2.16.0"/>
 	<property name="junit-version" value="4.12"/>
@@ -137,6 +137,9 @@ limitations under the License.
 	<path id="asm.class.path">
 		<pathelement location="${first_prereqs_root}/asm/asm.jar"/>
 	</path>
+	<path id="asm.commons.class.path">
+		<pathelement location="${first_prereqs_root}/asm-commons/asm-commons.jar"/>
+	</path>
 	<path id="stf.class.path">
 		<pathelement location="${stf_root}/stf.core/bin/stf.core.jar"/>
 		<pathelement location="${stf_root}/stf.load/bin/stf.load.jar"/>
@@ -159,6 +162,7 @@ limitations under the License.
 										  check-for-hamcrest-core, print-hamcrest-core-location, print-hamcrest-core-error,
 										  check-for-log4j, print-log4j-location, print-log4j-error,
 										  check-for-asm, print-asm-location, print-asm-error,
+										  check-for-asm-commons, print-asm-commons-location, print-asm-commons-error,
 										  check-for-tools-jar, print-tools-jar-location, print-tools-jar-error,
 										  check-for-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
 										  fail-if-error, print-all-prereq-versions">
@@ -173,6 +177,7 @@ limitations under the License.
 									  check-for-hamcrest-core, configure-hamcrest-core, print-hamcrest-core-location, print-hamcrest-core-error,
 									  check-for-log4j, configure-log4j, print-log4j-location, print-log4j-error,
 									  check-for-asm, configure-asm, print-asm-location, print-asm-error,
+									  check-for-asm-commons, configure-asm-commons, print-asm-commons-location, print-asm-commons-error,
 									  check-for-tools-jar, configure-tools-jar, print-tools-jar-location, print-tools-jar-error,
 									  check-for-windows-sysinternals, set-download-windows-sysinternals-required, configure-windows-sysinternals, print-windows-sysinternals-location, print-windows-sysinternals-error,
 									  fail-if-error, print-all-prereq-versions">
@@ -355,6 +360,21 @@ limitations under the License.
 		<available file="${asm}" property="asm_available"/>
 	</target>
 
+	<target name="check-for-asm-commons">
+		<property name="asm_commons_dir" location="${first_prereqs_root}/asm-commons"/>
+		<property name="asm_commons_file" value="asm-commons.jar"/>
+		<property name="asm_commons" value="${asm_commons_dir}/${asm_commons_file}"/>
+		<available file="${asm_commons_dir}/${asm_commons_file}" property="asm_commons_available"/>
+	</target>
+
+	<target name="configure-asm-commons" unless="asm_commons_available">
+		<!-- Fetch asm from https://repository.ow2.org/etc. -->
+		<delete dir="${first_prereqs_root}/asm-commons" failonerror="false"/>
+		<download-file destdir="${asm_commons_dir}" destfile="${asm_commons_file}" srcurl="https://repository.ow2.org/nexus/content/repositories/releases/org/ow2/asm/asm-commons/${asm-version}/asm-commons-${asm-version}.jar"/>
+		<property name="asm-commons" value="${asm_commons_dir}/${asm_commons_file}"/>
+		<available file="${asm_commons}" property="asm_commons_available"/>
+	</target>
+
 	<condition property="isZOS" value="true">
 			<equals arg1="${os.name}" arg2="z/OS"/>
 	</condition>
@@ -418,6 +438,11 @@ limitations under the License.
 		<echo message="Using ${asm_file} from ${asm}"/>
 	</target>
 
+	<target name="print-asm-commons-location" if="asm_commons_available">
+		<echo message="Using ${asm_commons_file} from ${asm_commons}"/>
+	</target>
+
+
 	<target name="print-ant-error" unless="ant_available">
 		<echo message="ERROR: Cannot find ant at ${ant}"/>
 		<property name="fail_run" value="true"/>
@@ -440,6 +465,11 @@ limitations under the License.
 
 	<target name="print-asm-error" unless="asm_available">
 		<echo message="ERROR: Cannot find ${asm_file} at ${asm}"/>
+		<property name="fail_run" value="true"/>
+	</target>
+
+	<target name="print-asm-commons-error" unless="asm_commons_available">
+		<echo message="ERROR: Cannot find ${asm_commons_file} at ${asm_commons}"/>
 		<property name="fail_run" value="true"/>
 	</target>
 
@@ -476,6 +506,7 @@ limitations under the License.
 		<echo message="Ant version in use     : ${ant-version}"/>
 		<echo message="log4j version in use   : ${log4j-version}"/>
 		<echo message="ASM version in use     : ${asm-version}"/>
+		<echo message="ASM commons version in use: ${asm-version}"/>
 		<echo message="junit version in use   : ${junit-version}"/>
 		<echo message="hamcrest version in use: ${hamcrest-version}"/>
 	</target>

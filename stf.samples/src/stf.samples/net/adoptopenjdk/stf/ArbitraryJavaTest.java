@@ -13,7 +13,11 @@
 *******************************************************************************/
 package net.adoptopenjdk.stf;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ArbitraryJavaTest {
+	private static final Logger logger = LogManager.getLogger(ArbitraryJavaTest.class.getName());
 	private enum OperationType { ADD, SUBTRACT, MULTIPLY, DIVIDE };
 	private OperationType operation;
 	
@@ -29,6 +33,11 @@ public class ArbitraryJavaTest {
 		if (System.currentTimeMillis() < 666) { 
 			throw new IllegalStateException("System clock wrong");
 		}
+
+		logger.info("ArbitraryJavaTest try exit");
+		// System.exit(3); // TODO just doing this to make sure my agent is working
+		System.exit(0);
+		logger.info("ArbitraryJavaTest got to here");
 	}
 	
 	public void runTest(int expectedResult, int v1, int v2) {
